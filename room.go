@@ -1,5 +1,9 @@
 package main
 
+import "github.com/gorilla/websocket"
+import "net/http"
+import "log"
+
 type room struct {
 	// 他のクライアントに転送するためのメッセージを保持するチャネル
 	forward chan []byte
@@ -35,4 +39,30 @@ func (r *room) run() {
 			}
 		}
 	}
+}
+
+const (
+	socketBufferSize  = 1024
+	messageBufferSize = 256
+)
+
+var upgrader = &websocket.Upgrader{ReadBufferSize: socketBufferSize, WriteBufferSize: messageBufferSize}
+
+func (r *room) ServerHTTP(w http.ResponseWriter, req *http.Request) {
+	// WebSocketコネクションの取得
+	socket, err := upgrader.Upgrade(w, req, nil)
+	if err != nil {
+		log.Fatal("ServerHTTP", err)
+		return
+	}
+	// 新しいクライアントの作成
+	client := &client{
+		socket: socket,
+		send:   make(chan []byte, messageBufferSize),
+		room:   r,
+	}
+	r.join <- client
+	defer func() { r.leave <- client }()
+	go client.write()
+	client.read()
 }
