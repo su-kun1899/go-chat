@@ -48,7 +48,7 @@ const (
 
 var upgrader = &websocket.Upgrader{ReadBufferSize: socketBufferSize, WriteBufferSize: messageBufferSize}
 
-func (r *room) ServerHTTP(w http.ResponseWriter, req *http.Request) {
+func (r *room) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	// WebSocketコネクションの取得
 	socket, err := upgrader.Upgrade(w, req, nil)
 	if err != nil {
