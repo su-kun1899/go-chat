@@ -6,7 +6,7 @@ import (
 )
 
 func TestNew(t *testing.T) {
-	var buf bytes.Buffe
+	var buf bytes.Buffer
 	tracer := New(&buf)
 	if tracer == nil {
 		t.Error("New からの戻り値がnilです")
