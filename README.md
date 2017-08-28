@@ -7,3 +7,9 @@
 ```console
 $ go get github.com/gorilla/websocket
 ```
+
+## 1.4
+
+go test でカバレッジを測る
+
+`go test -cover`
