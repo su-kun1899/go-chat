@@ -21,3 +21,12 @@ func (t *tracer) Trace(a ...interface{}) {
 	t.out.Write([]byte(fmt.Sprint(a...)))
 	t.out.Write([]byte("\n"))
 }
+
+type nilTracer struct{}
+
+func (t *nilTracer) Trace(a ...interface{}) {}
+
+// Off はTraceメソッドの呼び出しを無視するTracerを返します
+func Off() Tracer {
+	return &nilTracer{}
+}
