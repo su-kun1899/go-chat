@@ -31,12 +31,13 @@ func (t *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	var addr = flag.String("addr", ":8080", "アプリケーションのアドレス")
+	var securityKey = flag.String("security_key", "指定必須", "セキュリティキー")
 	var googleClientID = flag.String("google_client_id", "指定必須", "GoogleのクライアントID")
 	var googleSecret = flag.String("google_secret", "指定必須", "Googleのクライアント鍵")
 	flag.Parse()
 	// Gomniauthのセットアップ
 	// TODO securityKeyも外から渡せるように
-	gomniauth.SetSecurityKey("12345")
+	gomniauth.SetSecurityKey(*securityKey)
 	gomniauth.WithProviders(
 		facebook.New("クライアントID", "秘密の値", "http://localhost:8080/auth/callback/facebook"),
 		github.New("クライアントID", "秘密の値", "http://localhost:8080/auth/callback/github"),
