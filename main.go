@@ -30,7 +30,7 @@ func (t *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	var addr = flag.String("addr", ":8080", "アプリケーションのアドレス")
+	var port = flag.String("port", "8080", "アプリケーションのアドレス")
 	var securityKey = flag.String("security_key", "指定必須", "セキュリティキー")
 	var googleClientID = flag.String("google_client_id", "指定必須", "GoogleのクライアントID")
 	var googleSecret = flag.String("google_secret", "指定必須", "Googleのクライアント鍵")
@@ -39,9 +39,9 @@ func main() {
 	// TODO securityKeyも外から渡せるように
 	gomniauth.SetSecurityKey(*securityKey)
 	gomniauth.WithProviders(
-		facebook.New("クライアントID", "秘密の値", "http://localhost:8080/auth/callback/facebook"),
-		github.New("クライアントID", "秘密の値", "http://localhost:8080/auth/callback/github"),
-		google.New(*googleClientID, *googleSecret, "http://localhost:8080/auth/callback/google"),
+		facebook.New("クライアントID", "秘密の値", "http://localhost:"+*port+"/auth/callback/facebook"),
+		github.New("クライアントID", "秘密の値", "http://localhost:"+*port+"/auth/callback/github"),
+		google.New(*googleClientID, *googleSecret, "http://localhost:"+*port+"/auth/callback/google"),
 	)
 	r := newRoom()
 	r.tracer = trace.New(os.Stdout)
@@ -54,8 +54,8 @@ func main() {
 	go r.run()
 
 	// Starting web server
-	log.Println("Webサーバを開始します。ポート: ", *addr)
-	if err := http.ListenAndServe(*addr, nil); err != nil {
+	log.Println("Webサーバを開始します。ポート: ", *port)
+	if err := http.ListenAndServe((":" + *port), nil); err != nil {
 		log.Fatal("ListenAndServe:", err)
 	}
 }
