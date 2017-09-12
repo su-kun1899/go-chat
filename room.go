@@ -4,13 +4,15 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/stretchr/objx"
+
 	"github.com/gorilla/websocket"
 	"github.com/su-kun1899/go-chat/trace"
 )
 
 type room struct {
 	// 他のクライアントに転送するためのメッセージを保持するチャネル
-	forward chan []byte
+	forward chan *message
 	// チャットに参加しようとしているクライアントのためのチャネル
 	join chan *client
 	// チャットルームから退室しようとしているクライアントのためのチャネル
@@ -65,11 +67,18 @@ func (r *room) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		log.Fatal("ServerHTTP", err)
 		return
 	}
+
+	authCookie, err := req.Cookie("auth")
+	if err != nil {
+		log.Fatal("Cookieの取得に失敗しました:", err)
+		return
+	}
 	// 新しいクライアントの作成
 	client := &client{
-		socket: socket,
-		send:   make(chan []byte, messageBufferSize),
-		room:   r,
+		socket:   socket,
+		send:     make(chan *message, messageBufferSize),
+		room:     r,
+		userData: objx.MustFromBase64(authCookie.Value),
 	}
 	r.join <- client
 	defer func() { r.leave <- client }()
@@ -80,7 +89,7 @@ func (r *room) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 //　すぐに利用できるチャットルームを生成して返す
 func newRoom() *room {
 	return &room{
-		forward: make(chan []byte),
+		forward: make(chan *message),
 		join:    make(chan *client),
 		leave:   make(chan *client),
 		clients: make(map[*client]bool),
