@@ -9,14 +9,23 @@
     </style>
   </head>
   <body>
-    <ul id="messages"></ul>
-    WebSocketを使ったチャットアプリケーション
-    <form id="chatbox">
-      {{.UserData.name}}:<br/>
-      <textarea></textarea>
-      <input type="submit" value="send"/>
-      または <a href="/logout">サインアウト</a>
-    </form>
+    <div class="container">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <ul id="messages"></ul>
+        </div>
+      </div>
+      
+      <form id="chatbox">
+        <div class="form-group">
+          <label for="message">{{.UserData.name}}:からメッセージを送信</label>
+          または <a href="/logout">サインアウト</a>
+          <textarea id="message" class="form-control"></textarea>
+        </div>
+        <input type="submit" value="送信"/></a>
+      </form>
+    </div>
+    
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script>
       $(function(){
