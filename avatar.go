@@ -14,3 +14,16 @@ type Avatar interface {
 	// URLが取得できなかった場合には ErrNoAvatarURL を返します
 	GetAvatarURL(c *client) (string, error)
 }
+
+type AuthAvatar struct{}
+
+var UseAuthAvatar AuthAvatar
+
+func (_ AuthAvatar) GetAvatarURL(c *client) (string, error) {
+	if url, ok := c.userData["avatar_url"]; ok {
+		if urlStr, ok := url.(string); ok {
+			return urlStr, nil
+		}
+	}
+	return "", ErrNoAvatarURL
+}
