@@ -17,6 +17,8 @@ import (
 	"github.com/su-kun1899/go-chat/trace"
 )
 
+var avatars Avatar = UseFileSystemAvatar
+
 type templateHandler struct {
 	once     sync.Once
 	filename string
