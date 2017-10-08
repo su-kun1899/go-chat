@@ -51,7 +51,7 @@ func TestFileSystemAvatar(t *testing.T) {
 
 	var fileSystemAvatar FileSystemAvatar
 	user := &chatUser{uniqueID: "abc"}
-	url, err := fileSystemAvatar.GetAvatarURL(client)
+	url, err := fileSystemAvatar.GetAvatarURL(user)
 	if err != nil {
 		t.Error("FileSystemAvatar.GetAvatarURLはエラーを返すべきではありません")
 	}
